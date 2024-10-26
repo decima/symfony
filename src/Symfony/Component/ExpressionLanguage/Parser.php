@@ -113,7 +113,7 @@ class Parser
      *
      * @throws SyntaxError When the passed expression is invalid
      */
-    public function lint(TokenStream $stream, ?array $names = [], int $flags = 0): void
+    public function lint(TokenStream $stream, ?array $names = [], int $flags = 0): bool
     {
         if (null === $names) {
             trigger_deprecation('symfony/expression-language', '7.1', 'Passing "null" as the second argument of "%s()" is deprecated, pass "%s::IGNORE_UNKNOWN_VARIABLES" instead as a third argument.', __METHOD__, __CLASS__);
@@ -122,7 +122,13 @@ class Parser
             $names = [];
         }
 
-        $this->doParse($stream, $names, $flags);
+        try {
+            $this->doParse($stream, $names, $flags);
+        } catch (SyntaxError) {
+            return false;
+        }
+
+        return true;
     }
 
     /**

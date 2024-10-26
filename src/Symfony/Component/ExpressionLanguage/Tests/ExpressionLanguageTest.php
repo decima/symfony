@@ -484,9 +484,8 @@ class ExpressionLanguageTest extends TestCase
     public function testLintAllowsComments($expression)
     {
         $el = new ExpressionLanguage();
-        $el->lint($expression, []);
 
-        $this->expectNotToPerformAssertions();
+        $this->assertTrue($el->lint($expression, []));
     }
 
     public static function invalidCommentProvider()
@@ -499,30 +498,25 @@ class ExpressionLanguageTest extends TestCase
     /**
      * @dataProvider invalidCommentProvider
      */
-    public function testLintThrowsOnInvalidComments($expression)
+    public function testLintFalseOnInvalidComments($expression)
     {
         $el = new ExpressionLanguage();
 
-        $this->expectException(SyntaxError::class);
-        $el->lint($expression, []);
+        $this->assertFalse($el->lint($expression, []));
     }
 
-    public function testLintDoesntThrowOnValidExpression()
+    public function testLintSuccess()
     {
         $el = new ExpressionLanguage();
-        $el->lint('1 + 1', []);
 
-        $this->expectNotToPerformAssertions();
+        $this->assertTrue($el->lint('1 + 1', []));
     }
 
-    public function testLintThrowsOnInvalidExpression()
+    public function testLintFalseOnInvalidExpression()
     {
         $el = new ExpressionLanguage();
 
-        $this->expectException(SyntaxError::class);
-        $this->expectExceptionMessage('Unexpected end of expression around position 6 for expression `node.`.');
-
-        $el->lint('node.', ['node']);
+        $this->assertFalse($el->lint('node.', ['node']));
     }
 
     public function testCommentsIgnored()

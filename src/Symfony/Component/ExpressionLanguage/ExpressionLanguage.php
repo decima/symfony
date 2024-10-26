@@ -98,7 +98,7 @@ class ExpressionLanguage
      *
      * @throws SyntaxError When the passed expression is invalid
      */
-    public function lint(Expression|string $expression, ?array $names, int $flags = 0): void
+    public function lint(Expression|string $expression, ?array $names, int $flags = 0): bool
     {
         if (null === $names) {
             trigger_deprecation('symfony/expression-language', '7.1', 'Passing "null" as the second argument of "%s()" is deprecated, pass "%s\Parser::IGNORE_UNKNOWN_VARIABLES" instead as a third argument.', __METHOD__, __NAMESPACE__);
@@ -108,10 +108,10 @@ class ExpressionLanguage
         }
 
         if ($expression instanceof ParsedExpression) {
-            return;
+            return false;
         }
 
-        $this->getParser()->lint($this->getLexer()->tokenize((string) $expression), $names, $flags);
+        return $this->getParser()->lint($this->getLexer()->tokenize((string) $expression), $names, $flags);
     }
 
     /**
